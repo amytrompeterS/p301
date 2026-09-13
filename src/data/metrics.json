@@ -1,0 +1,172 @@
+{
+  "period": "2025",
+  "summary": {
+    "revenue": 2307700,
+    "orders": 51940,
+    "footTraffic": 189400,
+    "promoLift": 12.8,
+    "inventoryTurn": 5.6,
+    "avgOrderValue": 44.4,
+    "returnRate": 2.9
+  },
+  "monthly": [
+    {
+      "month": "Jan",
+      "revenue": 184300,
+      "orders": 4140,
+      "footTraffic": 14800,
+      "promoLift": 6.4,
+      "inventoryTurn": 4.9,
+      "avgOrderValue": 44.5,
+      "returnRate": 3.2
+    },
+    {
+      "month": "Feb",
+      "revenue": 176800,
+      "orders": 4010,
+      "footTraffic": 14120,
+      "promoLift": 7.1,
+      "inventoryTurn": 4.8,
+      "avgOrderValue": 44.1,
+      "returnRate": 3.3
+    },
+    {
+      "month": "Mar",
+      "revenue": 181400,
+      "orders": 4205,
+      "footTraffic": 15140,
+      "promoLift": 8.5,
+      "inventoryTurn": 5.1,
+      "avgOrderValue": 43.1,
+      "returnRate": 3.0
+    },
+    {
+      "month": "Apr",
+      "revenue": 188200,
+      "orders": 4370,
+      "footTraffic": 15860,
+      "promoLift": 9.8,
+      "inventoryTurn": 5.4,
+      "avgOrderValue": 43.0,
+      "returnRate": 2.9
+    },
+    {
+      "month": "May",
+      "revenue": 192600,
+      "orders": 4435,
+      "footTraffic": 16630,
+      "promoLift": 11.2,
+      "inventoryTurn": 5.5,
+      "avgOrderValue": 43.4,
+      "returnRate": 2.8
+    },
+    {
+      "month": "Jun",
+      "revenue": 196100,
+      "orders": 4525,
+      "footTraffic": 17410,
+      "promoLift": 13.6,
+      "inventoryTurn": 5.7,
+      "avgOrderValue": 43.3,
+      "returnRate": 2.7
+    },
+    {
+      "month": "Jul",
+      "revenue": 201400,
+      "orders": 4660,
+      "footTraffic": 18180,
+      "promoLift": 15.1,
+      "inventoryTurn": 5.8,
+      "avgOrderValue": 43.2,
+      "returnRate": 2.6
+    },
+    {
+      "month": "Aug",
+      "revenue": 203600,
+      "orders": 4740,
+      "footTraffic": 18640,
+      "promoLift": 16.3,
+      "inventoryTurn": 5.9,
+      "avgOrderValue": 43.0,
+      "returnRate": 2.5
+    },
+    {
+      "month": "Sep",
+      "revenue": 197900,
+      "orders": 4560,
+      "footTraffic": 17290,
+      "promoLift": 14.4,
+      "inventoryTurn": 5.6,
+      "avgOrderValue": 43.4,
+      "returnRate": 2.7
+    },
+    {
+      "month": "Oct",
+      "revenue": 191200,
+      "orders": 4480,
+      "footTraffic": 16320,
+      "promoLift": 12.8,
+      "inventoryTurn": 5.4,
+      "avgOrderValue": 42.7,
+      "returnRate": 2.9
+    },
+    {
+      "month": "Nov",
+      "revenue": 188500,
+      "orders": 4375,
+      "footTraffic": 15910,
+      "promoLift": 10.7,
+      "inventoryTurn": 5.2,
+      "avgOrderValue": 43.1,
+      "returnRate": 2.8
+    },
+    {
+      "month": "Dec",
+      "revenue": 205700,
+      "orders": 4835,
+      "footTraffic": 19740,
+      "promoLift": 18.2,
+      "inventoryTurn": 6.1,
+      "avgOrderValue": 42.6,
+      "returnRate": 3.1
+    }
+  ],
+  "salesBySku": [
+    {
+      "sku": "Classic Block Set",
+      "units": 18640,
+      "revenue": 523400,
+      "margin": 31.5
+    },
+    {
+      "sku": "STEM Rocket Lab",
+      "units": 12980,
+      "revenue": 474200,
+      "margin": 29.8
+    },
+    {
+      "sku": "Puzzle Adventure Pack",
+      "units": 15810,
+      "revenue": 401600,
+      "margin": 27.6
+    },
+    {
+      "sku": "Plush Safari Friends",
+      "units": 22160,
+      "revenue": 396800,
+      "margin": 25.9
+    },
+    {
+      "sku": "Outdoor Balance Board",
+      "units": 10430,
+      "revenue": 342200,
+      "margin": 32.1
+    }
+  ],
+  "channelMix": [
+    { "channel": "Web", "share": 42, "revenue": 968500 },
+    { "channel": "Retail", "share": 28, "revenue": 645400 },
+    { "channel": "Marketplace", "share": 18, "revenue": 415400 },
+    { "channel": "Wholesale", "share": 12, "revenue": 277400 }
+  ]
+}
