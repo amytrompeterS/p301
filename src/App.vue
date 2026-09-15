@@ -271,9 +271,9 @@ const selectedSummary = computed(() => {
           </v-col>
         </v-row>
 
-        <v-row dense>
-          <v-col cols="12" lg="3" class="d-flex">
-            <v-card class="rounded-xl h-100" flat border>
+        <v-row dense class="dashboard-panels">
+          <v-col cols="12" lg="6" class="panel-col">
+            <v-card class="rounded-xl sku-card" flat border>
               <div class="d-flex align-center justify-space-between pa-5 pb-2">
                 <div>
                   <div class="text-overline text-medium-emphasis">Sales by SKU</div>
@@ -313,8 +313,8 @@ const selectedSummary = computed(() => {
             </v-card>
           </v-col>
 
-          <v-col cols="12" lg="9" class="d-flex">
-            <v-card class="rounded-xl h-100 chart-card" flat border>
+          <v-col cols="12" lg="6" class="panel-col">
+            <v-card class="rounded-xl chart-card" flat border>
               <div class="d-flex align-center justify-space-between pa-5 pb-0">
                 <div>
                   <div class="text-overline text-medium-emphasis">Revenue trend</div>
@@ -349,21 +349,32 @@ const selectedSummary = computed(() => {
 
 .chart-shell {
   flex: 1 1 auto;
-  height: 100%;
-  min-height: 320px;
+  min-height: 0;
   position: relative;
+}
+
+.dashboard-panels {
+  align-items: stretch;
+}
+
+.panel-col {
+  display: flex;
+}
+
+.sku-card {
+  width: 100%;
 }
 
 .chart-card {
   display: flex;
   flex-direction: column;
   width: 100%;
+  height: 100%;
 }
 
 .chart-body {
   display: flex;
   flex: 1 1 auto;
-  height: 100%;
   min-height: 0;
 }
 
@@ -410,6 +421,10 @@ const selectedSummary = computed(() => {
 }
 
 @media (max-width: 600px) {
+  .chart-shell {
+    min-height: 320px;
+  }
+
   .sku-meta {
     gap: 8px;
     min-width: 136px;
