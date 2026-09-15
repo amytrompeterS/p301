@@ -39,6 +39,7 @@ const formatCompactNumber = (value: number) => {
 
 const asPercent = (value: number) => `${value.toFixed(1)}%`
 const asMultiplier = (value: number) => `${value.toFixed(1)}x`
+const annualRevenueTotal = metrics.monthly.reduce((total, item) => total + item.revenue, 0)
 
 const monthIndex = computed(() => metrics.monthly.findIndex((item) => item.month === selectedMonth.value))
 
@@ -120,7 +121,23 @@ const summaryCards = computed(() => {
 })
 
 const rankedSkus = computed(() => {
-  const sorted = [...metrics.salesBySku].sort((a, b) => b.revenue - a.revenue)
+  const selectedRevenueFactor = selectedMonth.value === 'All'
+    ? 1
+    : (currentMonth.value.revenue / annualRevenueTotal) * metrics.monthly.length
+  const previousRevenueFactor = selectedMonth.value === 'All'
+    ? 1
+    : (priorMonth.value.revenue / annualRevenueTotal) * metrics.monthly.length
+  const monthTrend = selectedMonth.value === 'All'
+    ? 0
+    : ((selectedRevenueFactor - previousRevenueFactor) / previousRevenueFactor) * 100
+
+  const sorted = metrics.salesBySku
+    .map((sku) => ({
+      ...sku,
+      displayRevenue: sku.revenue * selectedRevenueFactor,
+      displayTrend: sku.trend + monthTrend,
+    }))
+    .sort((a, b) => b.displayRevenue - a.displayRevenue)
   return skuView.value === 'top' ? sorted.slice(0, 10) : sorted.reverse().slice(0, 10)
 })
 
@@ -277,7 +294,10 @@ const selectedSummary = computed(() => {
               <div class="d-flex align-center justify-space-between pa-5 pb-2">
                 <div>
                   <div class="text-overline text-medium-emphasis">Sales by SKU</div>
-                  <div class="text-h6 font-weight-bold">{{ skuView === 'top' ? 'Top 10 toys' : 'Lowest 10 toys' }}</div>
+                  <div class="text-h6 font-weight-bold">
+                    {{ skuView === 'top' ? 'Top 10 toys' : 'Lowest 10 toys' }}
+                    <span v-if="selectedMonth !== 'All'" class="text-body-2 text-medium-emphasis">· {{ selectedMonth }}</span>
+                  </div>
                 </div>
                 <v-btn-toggle v-model="skuView" mandatory density="compact" color="primary" divided>
                   <v-btn value="top" size="small">Top</v-btn>
@@ -299,10 +319,10 @@ const selectedSummary = computed(() => {
                   </div>
                   <template #append>
                     <div class="sku-meta">
-                      <div class="sku-sales text-body-2 font-weight-medium">{{ formatCurrency(sku.revenue) }}</div>
-                      <div class="sku-trend" :class="sku.trend >= 0 ? 'text-success' : 'text-error'">
-                        <v-icon size="16" :icon="sku.trend >= 0 ? 'mdi-trending-up' : 'mdi-trending-down'" />
-                        {{ sku.trend >= 0 ? '+' : '' }}{{ sku.trend.toFixed(1) }}%
+                      <div class="sku-sales text-body-2 font-weight-medium">{{ formatCurrency(sku.displayRevenue) }}</div>
+                      <div class="sku-trend" :class="sku.displayTrend >= 0 ? 'text-success' : 'text-error'">
+                        <v-icon size="16" :icon="sku.displayTrend >= 0 ? 'mdi-trending-up' : 'mdi-trending-down'" />
+                        {{ sku.displayTrend >= 0 ? '+' : '' }}{{ sku.displayTrend.toFixed(1) }}%
                       </div>
                     </div>
                   </template>
@@ -348,8 +368,8 @@ const selectedSummary = computed(() => {
 }
 
 .chart-shell {
-  flex: 1 1 auto;
-  min-height: 0;
+  width: 100%;
+  height: 100%;
   position: relative;
 }
 
@@ -366,15 +386,15 @@ const selectedSummary = computed(() => {
 }
 
 .chart-card {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
   width: 100%;
   height: 100%;
 }
 
 .chart-body {
   display: flex;
-  flex: 1 1 auto;
+  height: 100%;
   min-height: 0;
 }
 
