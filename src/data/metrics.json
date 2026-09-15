@@ -136,31 +136,78 @@
       "sku": "Classic Block Set",
       "units": 18640,
       "revenue": 523400,
-      "margin": 31.5
+      "margin": 31.5,
+      "trend": 8.4
     },
     {
       "sku": "STEM Rocket Lab",
       "units": 12980,
       "revenue": 474200,
-      "margin": 29.8
+      "margin": 29.8,
+      "trend": 5.7
     },
     {
       "sku": "Puzzle Adventure Pack",
       "units": 15810,
       "revenue": 401600,
-      "margin": 27.6
+      "margin": 27.6,
+      "trend": 3.2
     },
     {
       "sku": "Plush Safari Friends",
       "units": 22160,
       "revenue": 396800,
-      "margin": 25.9
+      "margin": 25.9,
+      "trend": 6.9
     },
     {
       "sku": "Outdoor Balance Board",
       "units": 10430,
       "revenue": 342200,
-      "margin": 32.1
+      "margin": 32.1,
+      "trend": -1.8
+    },
+    {
+      "sku": "Magnetic Marble Run",
+      "units": 8320,
+      "revenue": 286900,
+      "margin": 28.4,
+      "trend": 4.6
+    },
+    {
+      "sku": "Woodland Play Kitchen",
+      "units": 6190,
+      "revenue": 214700,
+      "margin": 30.2,
+      "trend": -2.4
+    },
+    {
+      "sku": "Mini Makers Art Kit",
+      "units": 7480,
+      "revenue": 173600,
+      "margin": 26.8,
+      "trend": 1.5
+    },
+    {
+      "sku": "Dino Dig Excavation Set",
+      "units": 5120,
+      "revenue": 139800,
+      "margin": 24.7,
+      "trend": -4.1
+    },
+    {
+      "sku": "Rainbow Road Race Track",
+      "units": 4680,
+      "revenue": 118400,
+      "margin": 27.1,
+      "trend": 0.8
+    },
+    {
+      "sku": "Pocket Science Cards",
+      "units": 3920,
+      "revenue": 86400,
+      "margin": 23.9,
+      "trend": -6.3
     }
   ],
   "channelMix": [

@@ -15,7 +15,7 @@ body {
 }
 
 .v-application {
-  background: #f4f7fb;
+  background: #f7f9fc;
 }
 
 .v-main {
@@ -24,6 +24,14 @@ body {
 
 .v-navigation-drawer {
   border-right: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.dashboard-main {
+  background:
+    radial-gradient(circle at 4% 8%, rgba(186, 230, 253, 0.42), transparent 34%),
+    radial-gradient(circle at 96% 9%, rgba(254, 215, 170, 0.34), transparent 31%),
+    radial-gradient(circle at 52% 42%, rgba(221, 214, 254, 0.3), transparent 38%),
+    linear-gradient(135deg, #f8fbff 0%, #fbf9ff 48%, #fffaf5 100%);
 }
 
 .chart-shell {

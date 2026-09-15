@@ -18,6 +18,7 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Filler, 
 
 const monthOptions = ['All', ...metrics.monthly.map((item) => item.month)]
 const selectedMonth = ref('All')
+const skuView = ref<'top' | 'lowest'>('top')
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat('en-US', {
@@ -80,7 +81,7 @@ const summaryCards = computed(() => {
 
   return [
     {
-      label: 'Sales by SKU',
+      label: 'Sales',
       value: selectedMonth.value === 'All' ? formatCompactCurrency(revenueValue) : formatCompactCurrency(revenueValue),
       change: `${revenueDelta >= 0 ? '+' : ''}${revenueDelta.toFixed(1)}%`,
       icon: 'mdi-cash-multiple',
@@ -101,7 +102,7 @@ const summaryCards = computed(() => {
       label: 'Promo Lift',
       value: selectedMonth.value === 'All' ? asPercent(promoValue) : asPercent(promoValue),
       change: `${promoDelta >= 0 ? '+' : ''}${promoDelta.toFixed(1)}%`,
-      icon: 'mdi-tag-percent',
+      icon: 'mdi-sale',
       color: 'warning',
       positive: promoDelta >= 0,
       subtext: selectedMonth.value === 'All' ? 'Average campaign lift' : `${current.month} vs. previous month`,
@@ -118,20 +119,33 @@ const summaryCards = computed(() => {
   ]
 })
 
+const rankedSkus = computed(() => {
+  const sorted = [...metrics.salesBySku].sort((a, b) => b.revenue - a.revenue)
+  return skuView.value === 'top' ? sorted.slice(0, 10) : sorted.reverse().slice(0, 10)
+})
+
+const chartMonths = computed(() => {
+  if (selectedMonth.value === 'All') return metrics.monthly
+
+  const start = Math.max(monthIndex.value - 1, 0)
+  const end = Math.min(monthIndex.value + 2, metrics.monthly.length)
+  return metrics.monthly.slice(start, end)
+})
+
 const chartData = computed(() => ({
-  labels: metrics.monthly.map((item) => item.month),
+  labels: chartMonths.value.map((item) => item.month),
   datasets: [
     {
       label: 'Revenue',
-      data: metrics.monthly.map((item) => item.revenue),
+      data: chartMonths.value.map((item) => item.revenue),
       fill: true,
       borderColor: '#A5B4FC',
       backgroundColor: 'rgba(165, 180, 252, 0.28)',
       borderWidth: 3,
-      pointRadius: metrics.monthly.map((_, index) => (selectedMonth.value === 'All' ? 4 : index === monthIndex.value ? 6 : 3)),
+      pointRadius: chartMonths.value.map((item) => (selectedMonth.value === 'All' || item.month !== selectedMonth.value ? 4 : 8)),
       pointHoverRadius: 6,
-      pointBackgroundColor: metrics.monthly.map((_, index) =>
-        selectedMonth.value === 'All' ? '#A5B4FC' : index === monthIndex.value ? '#7C3AED' : '#BFDBFE',
+      pointBackgroundColor: chartMonths.value.map((item) =>
+        selectedMonth.value === 'All' ? '#A5B4FC' : item.month === selectedMonth.value ? '#7C3AED' : '#BFDBFE',
       ),
       pointBorderColor: '#ffffff',
       pointBorderWidth: 2,
@@ -171,6 +185,12 @@ const chartOptions = computed<ChartOptions<'line'>>(() => ({
     },
     y: {
       beginAtZero: false,
+      min: selectedMonth.value === 'All'
+        ? undefined
+        : Math.floor((Math.min(...chartMonths.value.map((item) => item.revenue)) - 8000) / 1000) * 1000,
+      max: selectedMonth.value === 'All'
+        ? undefined
+        : Math.ceil((Math.max(...chartMonths.value.map((item) => item.revenue)) + 8000) / 1000) * 1000,
       grid: {
         color: 'rgba(148, 163, 184, 0.18)',
       },
@@ -193,9 +213,9 @@ const selectedSummary = computed(() => {
 
   const current = currentMonth.value
   return {
-    title: `${current.month} performance`,
+    title: `${current.month} detail view`,
     value: formatCompactCurrency(current.revenue),
-    note: `Foot traffic: ${formatCompactNumber(current.footTraffic)}`,
+    note: `Focused against ${chartMonths.value.length - 1} nearby month${chartMonths.value.length - 1 === 1 ? '' : 's'}`,
   }
 })
 </script>
@@ -223,7 +243,7 @@ const selectedSummary = computed(() => {
       </v-container>
     </v-app-bar>
 
-    <v-main class="bg-grey-lighten-5">
+    <v-main class="dashboard-main">
       <v-container class="py-8" fluid>
         <v-row class="mb-6" dense>
           <v-col v-for="card in summaryCards" :key="card.label" cols="12" sm="6" md="3">
@@ -233,8 +253,8 @@ const selectedSummary = computed(() => {
                   <div class="text-caption text-medium-emphasis mb-1">{{ card.label }}</div>
                   <div class="text-h4 font-weight-bold">{{ card.value }}</div>
                 </div>
-                <v-avatar :color="card.color" size="42">
-                  <v-icon color="white" :icon="card.icon" />
+                <v-avatar :color="card.color" size="42" class="card-icon">
+                  <v-icon color="white" :icon="card.icon" size="22" />
                 </v-avatar>
               </div>
 
@@ -251,32 +271,158 @@ const selectedSummary = computed(() => {
           </v-col>
         </v-row>
 
-        <v-card class="rounded-xl mb-6" flat border>
-          <div class="d-flex align-center justify-space-between pa-5 pb-0">
-            <div>
-              <div class="text-overline text-medium-emphasis">Revenue trend</div>
-              <div class="text-h6 font-weight-bold">{{ selectedSummary.title }}</div>
-            </div>
-            <div class="text-body-2 text-medium-emphasis">{{ selectedSummary.note }}</div>
-          </div>
+        <v-row dense>
+          <v-col cols="12" lg="3" class="d-flex">
+            <v-card class="rounded-xl h-100" flat border>
+              <div class="d-flex align-center justify-space-between pa-5 pb-2">
+                <div>
+                  <div class="text-overline text-medium-emphasis">Sales by SKU</div>
+                  <div class="text-h6 font-weight-bold">{{ skuView === 'top' ? 'Top 10 toys' : 'Lowest 10 toys' }}</div>
+                </div>
+                <v-btn-toggle v-model="skuView" mandatory density="compact" color="primary" divided>
+                  <v-btn value="top" size="small">Top</v-btn>
+                  <v-btn value="lowest" size="small">Lowest</v-btn>
+                </v-btn-toggle>
+              </div>
 
-          <div class="pa-5 pt-2">
-            <div class="chart-shell">
-              <Line :data="chartData" :options="chartOptions" />
-            </div>
-          </div>
-        </v-card>
+              <v-list class="sku-list px-2 pb-3" lines="one">
+                <template v-for="(sku, index) in rankedSkus" :key="sku.sku">
+                  <v-list-item class="sku-row px-3">
+                  <template #prepend>
+                    <v-avatar size="28" color="grey-lighten-4" class="mr-3">
+                      <span class="text-caption font-weight-bold text-medium-emphasis">{{ index + 1 }}</span>
+                    </v-avatar>
+                  </template>
+                  <div class="sku-info">
+                    <div class="text-body-2 font-weight-medium text-truncate">{{ sku.sku }}</div>
+                    <div class="text-caption text-medium-emphasis">SKU-{{ sku.sku.replace(/[^A-Z0-9]/gi, '').slice(0, 6).toUpperCase() }}</div>
+                  </div>
+                  <template #append>
+                    <div class="sku-meta">
+                      <div class="sku-sales text-body-2 font-weight-medium">{{ formatCurrency(sku.revenue) }}</div>
+                      <div class="sku-trend" :class="sku.trend >= 0 ? 'text-success' : 'text-error'">
+                        <v-icon size="16" :icon="sku.trend >= 0 ? 'mdi-trending-up' : 'mdi-trending-down'" />
+                        {{ sku.trend >= 0 ? '+' : '' }}{{ sku.trend.toFixed(1) }}%
+                      </div>
+                    </div>
+                  </template>
+                  </v-list-item>
+                  <v-divider v-if="index < rankedSkus.length - 1" class="sku-divider" />
+                </template>
+              </v-list>
+            </v-card>
+          </v-col>
+
+          <v-col cols="12" lg="9" class="d-flex">
+            <v-card class="rounded-xl h-100 chart-card" flat border>
+              <div class="d-flex align-center justify-space-between pa-5 pb-0">
+                <div>
+                  <div class="text-overline text-medium-emphasis">Revenue trend</div>
+                  <div class="text-h6 font-weight-bold">{{ selectedSummary.title }}</div>
+                </div>
+                <div class="text-body-2 text-medium-emphasis text-right">{{ selectedSummary.note }}</div>
+              </div>
+
+              <div class="pa-5 pt-2 chart-body">
+                <div class="chart-shell">
+                  <Line :data="chartData" :options="chartOptions" />
+                </div>
+              </div>
+            </v-card>
+          </v-col>
+        </v-row>
       </v-container>
     </v-main>
   </v-app>
 </template>
 
 <style scoped>
+.card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .month-picker {
   max-width: 180px;
 }
 
 .chart-shell {
-  height: 320px;
+  flex: 1 1 auto;
+  height: 100%;
+  min-height: 320px;
+  position: relative;
+}
+
+.chart-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.chart-body {
+  display: flex;
+  flex: 1 1 auto;
+  height: 100%;
+  min-height: 0;
+}
+
+.chart-shell :deep(canvas) {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.sku-row {
+  align-items: center;
+  min-height: 58px;
+}
+
+.sku-list :deep(.v-list-item__content) {
+  min-width: 0;
+}
+
+.sku-info {
+  min-width: 0;
+}
+
+.sku-meta {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  min-width: 164px;
+  justify-content: flex-end;
+}
+
+.sku-sales {
+  min-width: 80px;
+  text-align: right;
+}
+
+.sku-trend {
+  min-width: 60px;
+  text-align: right;
+}
+
+.sku-divider {
+  margin: 0 12px;
+  border-color: rgba(100, 116, 139, 0.55);
+}
+
+@media (max-width: 600px) {
+  .sku-meta {
+    gap: 8px;
+    min-width: 136px;
+  }
+
+  .sku-sales {
+    min-width: 68px;
+    font-size: 0.75rem;
+  }
+
+  .sku-trend {
+    min-width: 56px;
+    font-size: 0.75rem;
+  }
 }
 </style>
